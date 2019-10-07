@@ -1,0 +1,51 @@
+[[_spring_qualifier_]]
+= Spring Qualifiers
+
+It shows how to differentiate beans of the same type with `@Qualifier`.
+It can also be used to annotate other custom annotations that can then be used as qualifiers.
+The following 3 applications are SpringBoot applications using Maven to be built. 
+
+== Differentiating Animal beans
+
+In our application, we have two beans of `Animal` type: `Dog` and `Cat`. We use the `@Qualifier` annotation to distinguish between them.
+
+We have an interface that defines the `Animal` type.
+
+`Dog` inherits from `Animal`. `@Component` annotation is a basic Spring annotation that allows `Dog` to be detected by Spring container. The `@Qualifier("dog")` uniquely identifies this bean with the "dog" string.
+
+We have another bean called `Cat`. This bean is also identified with the `@Qualifier("cat")` annotation. 
+
+The `ApplicationRunner` interface is also a Spring bean and is decorated with the `@Component` annotation; it is auto-detected by Spring.
+
+We inject a `Animal` bean into the `a1` field. The `@Qualifier("dog")` specifies that it is a `Dog` bean.
+Likewise, we inject the `Cat` bean into the `a2` field.
+
+The `BasicApplication` sets up the Spring Boot application. The `@SpringBootApplication` annotation enables auto-configuration and component scanning.
+
+
+== Using factory to create beans
+
+In the second application, we use a factory class to generate beans.
+
+In the previous example, the beans were auto-detected by Spring.
+Here, we add an `AnimalFactory` to create two beans with the help of the `@Bean` annotation.
+The `@Bean` annotation marks methods that define beans. The `@Qualifier("dog")` tells which implementation of the Animal to create.
+
+In addition of the factory, the annotations are removed from the `Dog` and `Cat` classes. 
+
+
+== Creating custom @Qualifier annotation
+
+To reduce code, we can create custom `@Qualifier` annotations.
+
+The `Dog` and `Cat` classes are decorated with `@Component` annotation; it will be auto-detected by Spring.
+
+We define a new `@AnimalQualifier` qualifier.
+The `@Target` annotation tells where the annotation can be applied. In our case, it can be applied to fields, methods, and parameters.
+The `@Retention` annotation specifies how the marked annotation is stored. With `RetentionPolicy.RUNTIME` the marked annotation is retained by the JVM so it can be used by the runtime environment.
+The `@interface` keyword is used to declare a new annotation type. 
+
+After that, in the `AnimalFactory` we use the `@AnimalQualifier` to identify what kind of beans are created.
+
+In the runner, we inject beans with `@Autowired` and `@AnimalQualifier` annotations.
+
